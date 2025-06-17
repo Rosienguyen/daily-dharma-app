@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Heart, Sunrise, Star, RefreshCw } from 'lucide-react';
-// Majjhima‑Nikāya catalogue (1‑152) is external for clarity
 import majjhimaSuttas from './majjhimaSuttas.json';
 
 const STORAGE_KEY = 'dailySutta';
 
 const BuddhismPaliApp = () => {
   /* ----------------------- State ----------------------- */
+  // 🏷 Default filter is now **pali** (the only combined tab)
   const [currentContent, setCurrentContent] = useState(null);
-  const [contentType, setContentType] = useState('mixed'); // unified “Pāli” tab
+  const [contentType, setContentType] = useState('pali');
   const [streak, setStreak] = useState(1);
   const [lastVisit, setLastVisit] = useState(new Date().toDateString());
 
   /* ------------ Static teaching / Pāli cards ----------- */
   const teachingsContent = [
-    /* (Copy your existing teaching & pāli items here — truncated for brevity) */
+    /* (keep all your teaching & pāli items here) */
     {
       type: 'sutta',
       title: 'Daily Sutta from Kinh Trung Bộ',
@@ -52,10 +52,10 @@ const BuddhismPaliApp = () => {
   });
 
   const getRandomContent = () => {
+    // By default “pali” shows *everything* (teachings + pāli quotes + suttas)
     let pool = teachingsContent;
     if (contentType === 'teaching') pool = teachingsContent.filter((c) => c.type === 'teaching');
     else if (contentType === 'sutta') pool = teachingsContent.filter((c) => c.type === 'sutta');
-    // "mixed" (labelled Pāli) shows everything
 
     let card = pool[Math.floor(Math.random() * pool.length)];
     if (card.type === 'sutta') card = buildSuttaCard(getDailySutta());
@@ -103,10 +103,10 @@ const BuddhismPaliApp = () => {
           </div>
         </div>
 
-        {/* Tabs – only one combined “Pāli” tab plus the others */}
+        {/* Filter tabs – Mixed removed, unified under "Pāli" */}
         <div className="flex mb-6 bg-white rounded-lg p-1 shadow-sm">
           {[
-            { key: 'mixed', label: 'Pāli' }, // unified tab
+            { key: 'pali', label: 'Pāli' }, // single combined tab
             { key: 'teaching', label: 'Teachings' },
             { key: 'sutta', label: 'Suttas' }
           ].map((opt) => (
