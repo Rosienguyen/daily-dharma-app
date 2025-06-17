@@ -7,6 +7,24 @@ const BuddhismPaliApp = () => {
   const [streak, setStreak] = useState(1);
   const [lastVisit, setLastVisit] = useState(new Date().toDateString());
 
+  const majjhimaSuttas = [
+    { number: 1, vietnamese: "Căn bản pháp môn", pali: "Mūlapariyāya sutta" },
+    { number: 2, vietnamese: "Tất cả lậu hoặc", pali: "Sabbāsava sutta" },
+    { number: 3, vietnamese: "Pháp tự thừa", pali: "Dhammadāyāda sutta" },
+    { number: 4, vietnamese: "Sợ hãi và khiếp đảm", pali: "Bhayabherava sutta" },
+    { number: 5, vietnamese: "Không cấu nhiễm", pali: "Anangana sutta" },
+    { number: 10, vietnamese: "Niệm xứ", pali: "Satipatthāna sutta" },
+    { number: 22, vietnamese: "Ví dụ con rắn", pali: "Alagaddūpama sutta" },
+    { number: 26, vietnamese: "Thánh cầu", pali: "Ariyapariyesanā sutta" },
+    { number: 35, vietnamese: "Tiểu kinh Saccaka", pali: "Cūlasaccaka sutta" },
+    { number: 39, vietnamese: "Đại kinh tại Assapura", pali: "Mahāassapura sutta" },
+    { number: 44, vietnamese: "Tiểu kinh phương tiện", pali: "Cūlavedalla sutta" },
+    { number: 62, vietnamese: "Đại kinh giáo giới La-hầu-la", pali: "Mahārāhulovāda sutta" },
+    { number: 79, vietnamese: "Tiểu kinh Sakuludayi", pali: "Cūlasakuludāyi sutta" },
+    { number: 118, vietnamese: "Nhập tức xuất tức niệm", pili: "Ānāpānasati sutta" },
+    { number: 141, vietnamese: "Phân biệt chân đế", pali: "Saccavibhanga sutta" }
+  ];
+
   const teachingsContent = [
     {
       type: 'teaching',
@@ -31,19 +49,75 @@ const BuddhismPaliApp = () => {
     },
     {
       type: 'pali',
-      title: 'Pali Word: Dukkha',
-      content: 'Suffering, dissatisfaction, stress. Not just pain, but the unsatisfactory nature of conditioned existence.',
-      pali: 'dukkha',
-      pronunciation: 'dook-kah',
-      reflection: 'Where do you notice dukkha in your daily experience?'
+      title: 'Pali Sentence: Kammaṃ khettaṃ, viññāṇaṃ bījaṃ',
+      content: 'Kamma is the field, consciousness is the seed.',
+      vietnamese: 'Nghiệp là ruộng, thức là hạt giống.',
+      pali: 'Kammaṃ khettaṃ, viññāṇaṃ bījaṃ',
+      vocabulary: [
+        { word: 'Kammaṃ', meaning: 'action, kamma', pronunciation: '[kăm-măng]', vietnamese: 'nghiệp' },
+        { word: 'Khettaṃ', meaning: 'field', pronunciation: '[khét-tăng]', vietnamese: 'ruộng' },
+        { word: 'Viññāṇaṃ', meaning: 'consciousness', pronunciation: '[vin-nhā-năng]', vietnamese: 'thức' },
+        { word: 'Bījaṃ', meaning: 'seed', pronunciation: '[bi-daŋ]', vietnamese: 'hạt giống' }
+      ],
+      grammar: 'Each clause is a noun-equation: subject + predicate, both in nominative or accusative depending on context. The verb "is" is implied. This is a metaphorical sentence common in Pāli suttas.',
+      reflection: 'How do your actions today plant seeds for future consciousness?'
     },
     {
       type: 'pali',
-      title: 'Pali Word: Anicca',
-      content: 'Impermanence. Everything that arises must pass away. This is the nature of all conditioned phenomena.',
-      pali: 'anicca',
-      pronunciation: 'ah-nee-chah',
-      reflection: 'What in your life right now exemplifies anicca?'
+      title: 'Pali Sentence: Mettā sabbalokakasiṇā',
+      content: 'Loving-kindness pervades all worlds.',
+      vietnamese: 'Từ bi thấm nhuần khắp mọi thế giới.',
+      pali: 'Mettā sabbalokakasiṇā',
+      vocabulary: [
+        { word: 'Mettā', meaning: 'loving-kindness', pronunciation: '[mét-tā]', vietnamese: 'từ bi' },
+        { word: 'Sabba', meaning: 'all', pronunciation: '[săb-ba]', vietnamese: 'tất cả' },
+        { word: 'Loka', meaning: 'world', pronunciation: '[lo-ka]', vietnamese: 'thế giới' },
+        { word: 'Kasiṇā', meaning: 'pervading', pronunciation: '[ka-si-nā]', vietnamese: 'thấm nhuần' }
+      ],
+      grammar: 'This is a compound sentence where "sabbalokakasiṇā" is a compound adjective modifying "mettā". The structure follows: noun + compound adjective.',
+      reflection: 'How can you extend your loving-kindness beyond your immediate circle today?'
+    },
+    {
+      type: 'pali',
+      title: 'Pali Sentence: Sabbe saṅkhārā aniccā',
+      content: 'All conditioned things are impermanent.',
+      vietnamese: 'Tất cả các hành là vô thường.',
+      pali: 'Sabbe saṅkhārā aniccā',
+      vocabulary: [
+        { word: 'Sabbe', meaning: 'all', pronunciation: '[săb-bê]', vietnamese: 'tất cả' },
+        { word: 'Saṅkhārā', meaning: 'conditioned things, formations', pronunciation: '[săng-khā-rā]', vietnamese: 'các hành' },
+        { word: 'Aniccā', meaning: 'impermanent', pronunciation: '[a-nít-chā]', vietnamese: 'vô thường' }
+      ],
+      grammar: 'Subject-predicate structure: "Sabbe saṅkhārā" (all formations) is the subject in nominative plural, "aniccā" is the predicate adjective agreeing in case and number.',
+      reflection: 'What attachments can you release by remembering impermanence?'
+    },
+    {
+      type: 'pali',
+      title: 'Pali Sentence: Natthi me saraṇaṃ aññaṃ, Buddho me saraṇaṃ varaṃ',
+      content: 'I have no other refuge, Buddha is my excellent refuge.',
+      vietnamese: 'Con không có nơi nương tựa nào khác, Phật là nơi nương tựa tối thượng của con.',
+      pali: 'Natthi me saraṇaṃ aññaṃ, Buddho me saraṇaṃ varaṃ',
+      vocabulary: [
+        { word: 'Natthi', meaning: 'there is not', pronunciation: '[nát-thi]', vietnamese: 'không có' },
+        { word: 'Me', meaning: 'my, to me', pronunciation: '[mê]', vietnamese: 'của con' },
+        { word: 'Saraṇaṃ', meaning: 'refuge, shelter', pronunciation: '[sa-ra-nang]', vietnamese: 'nơi nương tựa' },
+        { word: 'Aññaṃ', meaning: 'other, another', pronunciation: '[ăn-nhang]', vietnamese: 'khác' },
+        { word: 'Buddho', meaning: 'Buddha', pronunciation: '[būt-tho]', vietnamese: 'Phật' },
+        { word: 'Varaṃ', meaning: 'excellent, best', pronunciation: '[va-rang]', vietnamese: 'tối thượng' }
+      ],
+      grammar: 'Two parallel clauses connected by contrast. "Natthi" is an existential negative. "Me" is genitive/dative. The structure emphasizes devotion through negation followed by affirmation.',
+      reflection: 'What does taking refuge in the Buddha mean in your daily life?'
+    },
+    {
+      type: 'sutta',
+      title: 'Daily Sutta from Kinh Trung Bo',
+      suttaNumber: null, // Will be randomly assigned
+      suttaVietnamese: '',
+      suttaPali: '',
+      textLink: '',
+      audioLink: '',
+      content: 'Today\'s sutta from the Majjhima Nikaya (Middle Length Discourses)',
+      reflection: 'How can this sutta guide your practice today?'
     },
     {
       type: 'teaching',
@@ -57,7 +131,8 @@ const BuddhismPaliApp = () => {
       title: 'Pali Word: Karuṇā',
       content: 'Compassion. The trembling of the heart in response to suffering, coupled with the commitment to help.',
       pali: 'karuṇā',
-      pronunciation: 'kah-roo-nah',
+      pronunciation: '[ka-ru-nā]',
+      vietnamese: 'từ bi',
       reflection: 'How can you cultivate compassion for yourself today?'
     },
     {
@@ -79,17 +154,40 @@ const BuddhismPaliApp = () => {
       title: 'Pali Word: Saṅgha',
       content: 'Community of practitioners. The third jewel of Buddhism, representing spiritual friendship and mutual support.',
       pali: 'saṅgha',
-      pronunciation: 'sang-hah',
+      pronunciation: '[săng-gha]',
+      vietnamese: 'tăng đoàn',
       reflection: 'How can you cultivate supportive spiritual community?'
     }
   ];
 
   const getRandomContent = () => {
-    const filteredContent = contentType === 'mixed' 
-      ? teachingsContent 
-      : teachingsContent.filter(item => item.type === contentType);
+    let filteredContent = teachingsContent;
     
-    return filteredContent[Math.floor(Math.random() * filteredContent.length)];
+    if (contentType === 'teaching') {
+      filteredContent = teachingsContent.filter(item => item.type === 'teaching');
+    } else if (contentType === 'pali') {
+      filteredContent = teachingsContent.filter(item => item.type === 'pali');
+    } else if (contentType === 'sutta') {
+      filteredContent = teachingsContent.filter(item => item.type === 'sutta');
+    }
+    
+    let selectedContent = filteredContent[Math.floor(Math.random() * filteredContent.length)];
+    
+    // If it's a sutta type, randomly assign a sutta from Majjhima
+    if (selectedContent.type === 'sutta') {
+      const randomSutta = majjhimaSuttas[Math.floor(Math.random() * majjhimaSuttas.length)];
+      selectedContent = {
+        ...selectedContent,
+        suttaNumber: randomSutta.number,
+        suttaVietnamese: randomSutta.vietnamese,
+        suttaPali: randomSutta.pali,
+        title: `📖 ${randomSutta.number}. ${randomSutta.vietnamese} (${randomSutta.pali})`,
+        textLink: `https://suttacentral.net/mn${randomSutta.number}/vi/thich-minh-chau`,
+        audioLink: `https://www.youtube.com/results?search_query=kinh+trung+bo+${randomSutta.number}+${encodeURIComponent(randomSutta.vietnamese)}`
+      };
+    }
+    
+    return selectedContent;
   };
 
   const refreshContent = () => {
@@ -110,14 +208,16 @@ const BuddhismPaliApp = () => {
 
   const getContentIcon = () => {
     if (!currentContent) return <BookOpen className="h-6 w-6" />;
-    return currentContent.type === 'teaching' ? <Heart className="h-6 w-6" /> : <Star className="h-6 w-6" />;
+    if (currentContent.type === 'teaching') return <Heart className="h-6 w-6" />;
+    if (currentContent.type === 'sutta') return <BookOpen className="h-6 w-6" />;
+    return <Star className="h-6 w-6" />;
   };
 
   const getGradientClass = () => {
     if (!currentContent) return 'from-blue-500 to-purple-600';
-    return currentContent.type === 'teaching' 
-      ? 'from-amber-500 to-orange-600' 
-      : 'from-emerald-500 to-teal-600';
+    if (currentContent.type === 'teaching') return 'from-amber-500 to-orange-600';
+    if (currentContent.type === 'sutta') return 'from-purple-500 to-indigo-600';
+    return 'from-emerald-500 to-teal-600';
   };
 
   return (
@@ -142,7 +242,8 @@ const BuddhismPaliApp = () => {
           {[
             { key: 'mixed', label: 'Mixed' },
             { key: 'teaching', label: 'Teachings' },
-            { key: 'pali', label: 'Pali' }
+            { key: 'pali', label: 'Pali' },
+            { key: 'sutta', label: 'Suttas' }
           ].map((option) => (
             <button
               key={option.key}
@@ -169,7 +270,8 @@ const BuddhismPaliApp = () => {
                 <div className="flex items-center">
                   {getContentIcon()}
                   <span className="ml-2 text-sm font-medium opacity-90">
-                    {currentContent.type === 'teaching' ? 'Buddhist Teaching' : 'Pali Study'}
+                    {currentContent.type === 'teaching' ? 'Buddhist Teaching' : 
+                     currentContent.type === 'sutta' ? 'Daily Sutta' : 'Pali Study'}
                   </span>
                 </div>
                 <button
@@ -192,13 +294,79 @@ const BuddhismPaliApp = () => {
                 {currentContent.content}
               </p>
               
+              {currentContent.vietnamese && (
+                <p className="text-gray-600 leading-relaxed mb-4 italic">
+                  {currentContent.vietnamese}
+                </p>
+              )}
+              
               <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-600 mb-1">Pali term:</p>
-                <p className="font-semibold text-gray-800 text-lg">{currentContent.pali}</p>
+                <p className="text-sm text-gray-600 mb-1">📜 Pali:</p>
+                <p className="font-semibold text-gray-800 text-lg mb-3">{currentContent.pali}</p>
+                
+                {currentContent.pronunciation && !currentContent.vocabulary && (
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Pronunciation:</span> {currentContent.pronunciation}
+                    {currentContent.vietnamese && <span className="ml-2">• Vietnamese: {currentContent.vietnamese}</span>}
+                  </p>
+                )}
               </div>
+
+              {currentContent.vocabulary && (
+                <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-blue-800 mb-3">📖 Vocabulary:</p>
+                  <div className="space-y-2">
+                    {currentContent.vocabulary.map((item, index) => (
+                      <div key={index} className="text-sm">
+                        <span className="font-semibold text-gray-800">{item.word}:</span>{' '}
+                        <span className="text-gray-700">{item.meaning}</span>
+                        <br />
+                        <span className="text-xs text-gray-500 ml-2">
+                          Phát âm: {item.pronunciation} • Vietnamese: {item.vietnamese}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {currentContent.grammar && (
+                <div className="bg-green-50 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-green-800 mb-2">🔍 Grammar Explanation:</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {currentContent.grammar}
+                  </p>
+                </div>
+              )}
+
+              {currentContent.type === 'sutta' && (
+                <div className="bg-purple-50 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-purple-800 mb-3">📚 Study Links:</p>
+                  <div className="space-y-2">
+                    <a 
+                      href={currentContent.textLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-sm text-purple-700 hover:text-purple-900 transition-colors"
+                    >
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      🔗 Đọc tại đây (SuttaCentral)
+                    </a>
+                    <a 
+                      href={currentContent.audioLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-sm text-purple-700 hover:text-purple-900 transition-colors"
+                    >
+                      <span className="mr-2">🎧</span>
+                      YouTube audio
+                    </a>
+                  </div>
+                </div>
+              )}
               
               <div className="border-t pt-4">
-                <p className="text-xs text-gray-500 mb-2">Daily Reflection:</p>
+                <p className="text-xs text-gray-500 mb-2">💭 Daily Reflection:</p>
                 <p className="text-sm text-gray-700 italic">
                   {currentContent.reflection}
                 </p>
