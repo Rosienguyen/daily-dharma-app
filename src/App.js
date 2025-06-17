@@ -1,133 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, BookOpen, Heart, Sunrise, Star, RefreshCw } from 'lucide-react';
-// 👇 Full Majjhima‑Nikāya metadata (1‑152) lives in an external JSON so the UI stays lean.
-//    Create a file `majjhimaSuttas.json` alongside this component with the structure:
-//    [ { "number": 1, "vietnamese": "Căn bản pháp môn", "pali": "Mūlapariyāya" }, ... ]
+import { BookOpen, Heart, Sunrise, Star, RefreshCw } from 'lucide-react';
+// Majjhima‑Nikāya catalogue (1‑152) is external for clarity
 import majjhimaSuttas from './majjhimaSuttas.json';
 
-const LOCAL_STORAGE_DAILY_KEY = 'dailySutta';
+const STORAGE_KEY = 'dailySutta';
 
 const BuddhismPaliApp = () => {
-  /* --------------------------------------------------
-   * State
-   * ------------------------------------------------*/
+  /* ----------------------- State ----------------------- */
   const [currentContent, setCurrentContent] = useState(null);
-  const [contentType, setContentType] = useState('mixed'); // Mixed now also covers all Pāli items
+  const [contentType, setContentType] = useState('mixed'); // unified “Pāli” tab
   const [streak, setStreak] = useState(1);
   const [lastVisit, setLastVisit] = useState(new Date().toDateString());
 
-  /* --------------------------------------------------
-   * Static teaching / Pāli snippets
-   * ------------------------------------------------*/
+  /* ------------ Static teaching / Pāli cards ----------- */
   const teachingsContent = [
-    /* … unchanged teaching & Pāli array from original code … */
-    // (Truncated here for brevity ‑ copy the existing content array)
+    /* (Copy your existing teaching & pāli items here — truncated for brevity) */
     {
       type: 'sutta',
       title: 'Daily Sutta from Kinh Trung Bộ',
       content: "Today's sutta from the Majjhima Nikaya (Middle Length Discourses)",
       reflection: 'How can this sutta guide your practice today?'
-    },
-    /* … the rest of your teaching/pāli entries … */
+    }
   ];
 
-  /* --------------------------------------------------
-   * Helpers
-   * ------------------------------------------------*/
-  /** Return the Majjhima sutta of the day (persistent within 24h) */
+  /* ------------------ Helper functions ----------------- */
   const getDailySutta = () => {
-    const todayKey = new Date().toISOString().slice(0, 10); // YYYY‑MM‑DD
-    const stored = JSON.parse(localStorage.getItem(LOCAL_STORAGE_DAILY_KEY) || '{}');
+    const today = new Date().toISOString().slice(0, 10);
+    const cached = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 
-    let chosenNumber;
-    if (stored.date === todayKey && stored.suttaNumber) {
-      chosenNumber = stored.suttaNumber;
+    let number;
+    if (cached.date === today) {
+      number = cached.suttaNumber;
     } else {
-      chosenNumber = majjhimaSuttas[Math.floor(Math.random() * majjhimaSuttas.length)].number;
-      localStorage.setItem(
-        LOCAL_STORAGE_DAILY_KEY,
-        JSON.stringify({ date: todayKey, suttaNumber: chosenNumber })
-      );
+      number = majjhimaSuttas[Math.floor(Math.random() * majjhimaSuttas.length)].number;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, suttaNumber: number }));
     }
-
-    return majjhimaSuttas.find((s) => s.number === chosenNumber);
+    return majjhimaSuttas.find((s) => s.number === number);
   };
 
-  /** Build a study‑card object for the given sutta metadata */
-  const buildSuttaContent = (sutta) => {
-    const { number, vietnamese, pali } = sutta;
+  const buildSuttaCard = ({ number, vietnamese, pali }) => ({
+    type: 'sutta',
+    suttaNumber: number,
+    suttaVietnamese: vietnamese,
+    suttaPali: pali,
+    title: `📖 ${number}. ${vietnamese} (${pali})`,
+    englishLink: `https://suttacentral.net/mn${number}/en/sujato`,
+    vietnameseLink: `https://www.budsas.org/uni/u-kinh-trungbo/trung${number}.htm`,
+    audioLink: `https://www.youtube.com/results?search_query=kinh+trung+bo+${number}+${encodeURIComponent(vietnamese)}`,
+    content: "Today's sutta from the Majjhima Nikaya (Middle Length Discourses)",
+    reflection: 'How can this sutta guide your practice today?'
+  });
 
-    return {
-      type: 'sutta',
-      suttaNumber: number,
-      suttaVietnamese: vietnamese,
-      suttaPali: pali,
-      title: `📖 ${number}. ${vietnamese} (${pali})`,
-      // 📖 English translation on SuttaCentral (Bhikkhu Sujato)
-      englishLink: `https://suttacentral.net/mn${number}/en/sujato`,
-      // 📖 Vietnamese translation on Budsas
-      vietnameseLink: `https://www.budsas.org/uni/u-kinh-trungbo/trung${number}.htm`,
-      // 🎧 Typical audio search on YouTube
-      audioLink: `https://www.youtube.com/results?search_query=kinh+trung+bo+${number}+${encodeURIComponent(
-        vietnamese
-      )}`,
-      content: "Today's sutta from the Majjhima Nikaya (Middle Length Discourses)",
-      reflection: 'How can this sutta guide your practice today?'
-    };
-  };
-
-  /** Pick a random card according to the active filter */
   const getRandomContent = () => {
     let pool = teachingsContent;
+    if (contentType === 'teaching') pool = teachingsContent.filter((c) => c.type === 'teaching');
+    else if (contentType === 'sutta') pool = teachingsContent.filter((c) => c.type === 'sutta');
+    // "mixed" (labelled Pāli) shows everything
 
-    if (contentType === 'teaching') pool = teachingsContent.filter((i) => i.type === 'teaching');
-    else if (contentType === 'sutta') pool = teachingsContent.filter((i) => i.type === 'sutta');
-    // 🔔 No dedicated Pāli tab any more – it is folded into “mixed”.
-
-    let selected = pool[Math.floor(Math.random() * pool.length)];
-
-    // Replace placeholder with the real daily sutta
-    if (selected.type === 'sutta') {
-      selected = buildSuttaContent(getDailySutta());
-    }
-
-    return selected;
+    let card = pool[Math.floor(Math.random() * pool.length)];
+    if (card.type === 'sutta') card = buildSuttaCard(getDailySutta());
+    return card;
   };
 
-  /* --------------------------------------------------
-   * Effects
-   * ------------------------------------------------*/
-  // Daily streak handling + initial content
+  /* --------------------- Effects ----------------------- */
   useEffect(() => {
     const today = new Date().toDateString();
     if (lastVisit !== today) {
-      setStreak((prev) => prev + 1);
+      setStreak((s) => s + 1);
       setLastVisit(today);
     }
-
     if (!currentContent) setCurrentContent(getRandomContent());
   }, [currentContent, lastVisit]);
 
-  /* --------------------------------------------------
-   * UI helpers (icons, gradients)
-   * ------------------------------------------------*/
-  const getContentIcon = () => {
+  /* ---------------- UI helpers ---------------- */
+  const iconFor = () => {
     if (!currentContent) return <BookOpen className="h-6 w-6" />;
     if (currentContent.type === 'teaching') return <Heart className="h-6 w-6" />;
     if (currentContent.type === 'sutta') return <BookOpen className="h-6 w-6" />;
-    return <Star className="h-6 w-6" />; // Pāli inside mixed
+    return <Star className="h-6 w-6" />;
   };
 
-  const getGradientClass = () => {
+  const gradientFor = () => {
     if (!currentContent) return 'from-blue-500 to-purple-600';
     if (currentContent.type === 'teaching') return 'from-amber-500 to-orange-600';
     if (currentContent.type === 'sutta') return 'from-purple-500 to-indigo-600';
     return 'from-emerald-500 to-teal-600';
   };
 
-  /* --------------------------------------------------
-   * Render
-   * ------------------------------------------------*/
+  /* -------------------- Render -------------------- */
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="max-w-md mx-auto">
@@ -143,37 +103,37 @@ const BuddhismPaliApp = () => {
           </div>
         </div>
 
-        {/* Content‑type switcher – Pāli tab removed */}
+        {/* Tabs – only one combined “Pāli” tab plus the others */}
         <div className="flex mb-6 bg-white rounded-lg p-1 shadow-sm">
           {[
-            { key: 'mixed', label: 'Mixed' },
+            { key: 'mixed', label: 'Pāli' }, // unified tab
             { key: 'teaching', label: 'Teachings' },
             { key: 'sutta', label: 'Suttas' }
-          ].map((option) => (
+          ].map((opt) => (
             <button
-              key={option.key}
+              key={opt.key}
               onClick={() => {
-                setContentType(option.key);
+                setContentType(opt.key);
                 setCurrentContent(null);
               }}
               className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                contentType === option.key ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-gray-800'
+                contentType === opt.key ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              {option.label}
+              {opt.label}
             </button>
           ))}
         </div>
 
-        {/* Main card */}
+        {/* Content card */}
         {currentContent && (
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
-            <div className={`bg-gradient-to-r ${getGradientClass()} p-6 text-white`}>
+            <div className={`bg-gradient-to-r ${gradientFor()} p-6 text-white`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center">
-                  {getContentIcon()}
+                  {iconFor()}
                   <span className="ml-2 text-sm font-medium opacity-90">
-                    {currentContent.type === 'teaching' ? 'Buddhist Teaching' : currentContent.type === 'sutta' ? 'Daily Sutta' : 'Pāli Study'}
+                    {currentContent.type === 'teaching' ? 'Teaching' : currentContent.type === 'sutta' ? 'Daily Sutta' : 'Pāli Study'}
                   </span>
                 </div>
                 <button onClick={() => setCurrentContent(getRandomContent())} className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
@@ -187,7 +147,6 @@ const BuddhismPaliApp = () => {
               <p className="text-gray-700 leading-relaxed mb-4">{currentContent.content}</p>
               {currentContent.vietnamese && <p className="text-gray-600 leading-relaxed mb-4 italic">{currentContent.vietnamese}</p>}
 
-              {/* Pāli block */}
               {currentContent.pali && (
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
                   <p className="text-sm text-gray-600 mb-1">📜 Pāli:</p>
@@ -195,27 +154,17 @@ const BuddhismPaliApp = () => {
                 </div>
               )}
 
-              {/* Vocabulary / Grammar remain as‑is (not shown here for brevity) */}
-
-              {/* Study links for Sutta */}
               {currentContent.type === 'sutta' && (
-                <div className="bg-purple-50 rounded-lg p-4 mb-4">
-                  <p className="text-sm font-medium text-purple-800 mb-3">📚 Study Links:</p>
-                  <div className="space-y-2 text-sm">
-                    <a href={currentContent.englishLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors">
-                      <BookOpen className="h-4 w-4 mr-2" /> English translation (SuttaCentral)
-                    </a>
-                    <a href={currentContent.vietnameseLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors">
-                      <BookOpen className="h-4 w-4 mr-2" /> Vietnamese translation (Budsas)
-                    </a>
-                    <a href={currentContent.audioLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors">
-                      <span className="mr-2">🎧</span> YouTube audio search
-                    </a>
+                <div className="bg-purple-50 rounded-lg p-4 mb-4 text-sm">
+                  <p className="font-medium text-purple-800 mb-3">📚 Study Links:</p>
+                  <div className="space-y-2">
+                    <a href={currentContent.englishLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors"><BookOpen className="h-4 w-4 mr-2" /> English (SuttaCentral)</a>
+                    <a href={currentContent.vietnameseLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors"><BookOpen className="h-4 w-4 mr-2" /> Vietnamese (Budsas)</a>
+                    <a href={currentContent.audioLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-700 hover:text-purple-900 transition-colors"><span className="mr-2">🎧</span>YouTube Audio</a>
                   </div>
                 </div>
               )}
 
-              {/* Reflection */}
               <div className="border-t pt-4">
                 <p className="text-xs text-gray-500 mb-2">💭 Daily Reflection:</p>
                 <p className="text-sm text-gray-700 italic">{currentContent.reflection}</p>
@@ -224,20 +173,16 @@ const BuddhismPaliApp = () => {
           </div>
         )}
 
-        {/* Action button */}
+        {/* Refresh */}
         <div className="space-y-3">
           <button onClick={() => setCurrentContent(getRandomContent())} className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
             <RefreshCw className="h-4 w-4 mr-2" /> Get New Content
           </button>
-          <div className="text-center">
-            <p className="text-xs text-gray-500">Come back tomorrow for new wisdom ✨</p>
-          </div>
+          <p className="text-center text-xs text-gray-500">Come back tomorrow for new wisdom ✨</p>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 pb-6">
-          <p className="text-xs text-gray-400">"The mind is everything. What you think you become." – Buddha</p>
-        </div>
+        <p className="text-center mt-8 pb-6 text-xs text-gray-400">"The mind is everything. What you think you become." – Buddha</p>
       </div>
     </div>
   );
